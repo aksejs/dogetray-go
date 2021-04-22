@@ -7,24 +7,36 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/getlantern/systray"
+	"github.com/robfig/cron/v3"
 	"github.com/soryuu/doge-systray/icon"
 )
 
+type state struct {
+	Price string
+	Cron  *cron.Cron
+}
+
 func main() {
+	s := &state{}
+
 	fmt.Println("service started")
-	systray.Run(onReady, onExit)
+	systray.Run(s.onReady, s.onExit)
 }
 
-func onReady() {
+func (s *state) onReady() {
 	systray.SetIcon(icon.Data)
-	getPrice()
-	systray.AddMenuItem("Quit", "Quit the whole app")
+	s.updatePrice()
+
+	s.Cron = cron.New()
+	s.Cron.AddFunc("@every 20s", s.updatePrice)
+	s.Cron.Start()
 }
 
-func onExit() {
-	// clean up here
+func (s *state) onExit() {
+	s.Cron.Stop()
 }
-func getPrice() {
+
+func (s *state) updatePrice() {
 	// Request the HTML page.
 	res, err := http.Get("https://coinmarketcap.com/currencies/dogecoin/")
 
