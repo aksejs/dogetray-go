@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
+	"math"
 	"net/http"
+	"strconv"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/getlantern/systray"
@@ -28,7 +30,7 @@ func (s *state) onReady() {
 	s.updatePrice()
 
 	s.Cron = cron.New()
-	s.Cron.AddFunc("@every 20s", s.updatePrice)
+	s.Cron.AddFunc("@every 10m", s.updatePrice)
 	s.Cron.Start()
 }
 
@@ -37,7 +39,6 @@ func (s *state) onExit() {
 }
 
 func (s *state) updatePrice() {
-	// Request the HTML page.
 	res, err := http.Get("https://coinmarketcap.com/currencies/dogecoin/")
 
 	if err != nil {
@@ -49,13 +50,19 @@ func (s *state) updatePrice() {
 		log.Fatalf("status code error: %d %s", res.StatusCode, res.Status)
 	}
 
-	// Load the HTML document
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Find the review items
 	price := doc.Find(".priceValue___11gHJ").Text()
-	systray.SetTitle(price)
+	floatPrice, err := strconv.ParseFloat(price[1:], 64)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	title := strconv.FormatFloat(math.Round(floatPrice*100)/100, 'f', -1, 64)
+
+	systray.SetTitle("$" + title)
 }
