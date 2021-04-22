@@ -1,4 +1,4 @@
-module github.com/soryuu/doge-systray
+module github.com/soryuu/dogetray-go
 
 go 1.16
 

@@ -1,2 +1,3 @@
-# doge-systray
+# dogetray-go
+    stonks
 🔭
