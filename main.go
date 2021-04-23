@@ -10,7 +10,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/getlantern/systray"
 	"github.com/robfig/cron/v3"
-	"github.com/soryuu/doge-systray/icon"
+	"github.com/soryuu/dogetray-go/icon"
 )
 
 type state struct {
