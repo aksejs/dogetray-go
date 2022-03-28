@@ -55,7 +55,9 @@ func (s *state) updatePrice() {
 		log.Fatal(err)
 	}
 
-	price := doc.Find(".priceValue___11gHJ").Text()
+	price := doc.Find(".priceValue").Text()
+	fmt.Println("price")
+	fmt.Println(price)
 	floatPrice, err := strconv.ParseFloat(price[1:], 64)
 
 	if err != nil {
